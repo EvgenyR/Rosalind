@@ -3,7 +3,9 @@ using System.IO;
 using System.Linq;
 using System;
 using System.Diagnostics;
+using System.Net;
 using System.Numerics;
+using System.Text.RegularExpressions;
 
 namespace Rslnd
 {
@@ -16,11 +18,6 @@ namespace Rslnd
             BigInteger xminusyfact = Fact(x - y);
             return xfact/(yfact*xminusyfact);
         }
-
-        //public static string FastaString(string input)
-        //{
-
-        //}
 
         public static List<string> FastaStrings(string file)
         {
@@ -86,8 +83,69 @@ namespace Rslnd
             return s.Replace('T', 'U');
         }
 
-        public static string ORF(string s)
+        public static void OpenReadingFrames()
         {
+            string s = "CGCAGTGGGAGGCAATGACGCTCAAATGCTCAGTTCTCGGCAACCAGCGCCCTGAAGACATAATAGCGATTCACTATAACTGTCTAACTCCCATAGGCCAGAATACTGTACGCTTAGACCCCTTAAGCATAATGTATTTGCCATGCCATGCGCTGATTATTTATTACCGGGACCATTCTATGAAGTCGAAGTCACCCGAATTTGTCCTCGCGCAATGGACACACTCAAGAGAATAGGGGTAGACGGTTGTGAGACGCTTGGACGATCGATCTAAACCGGGGCAAACATTGCTTCCCTCCCAGTATCAAGGCACTTCCTTATACGTGTAAGTACCAGAATTACGTATTCTTCTGCGTTCGGAGTAAGGGTGCCGTCCCAGAGTGCCGACATACTAAAGCGTGGGCTAAAATTGTCACGTCTAATGATAGACATTTCGTATACCCCTGGAGACAAGGAAAAAACATAACTAGTATGCAAGCGAACCGTGGGTAGCTACCCACGGTTCGCTTGCATTCGTGCGAAGCCGGATACAAGCTTTATTGTGGACTACGCCTACACCTAGCTAACGCTACTTGATAATTAATCGACCTTACACAACTTAAGCCAGCCAGATTGTCTGAGAGGCGGGACCGTTCTATCTACCACGGCAGTGATTGCTGCTGTCCGTGAAGAGACTTCCAGCATAGATGTTACAGATGACTTGCGGTTAGTGTCTCGATTTTGTATTGTGCAACATATTATGTACAGTTGATTTCTGCGGCGAGCTTCATTATCCACCATCAGCATCCTGAGAGTTACATACTAGTGTACTAGTCTTGCTGGTAACGGCGGCGTGGAGCTGAACCTCGGCAAACGCAAAGGCGTTTGTCGTGGTTTCGCCGAAGGGCGATCGTACATAAAAACAGATTGACTTATATATGAGTCTAATATCCTACATGACTCCCATCCTCCTTCCTTTCGACGCTATCAAATAAGTGTATCCAA";
+
+            string sc = Helper.ReverseComplement(s);
+
+            List<String> source = new List<string>();
+            List<String> orfs = new List<string>();
+
+            source.Add(s);
+            source.Add(s.Substring(1, s.Length - 1));
+            source.Add(s.Substring(2, s.Length - 2));
+            source.Add(sc);
+            source.Add(sc.Substring(1, sc.Length - 1));
+            source.Add(sc.Substring(2, sc.Length - 2));
+
+            foreach (var str in source)
+            {
+                List<string> orffen = Helper.ORF(str);
+
+                foreach (string orf1 in orffen)
+                {
+                    string orf = orf1;
+                    if (orf != string.Empty && !orfs.Contains(orf))
+                    {
+                        orfs.Add(orf);
+
+                        while (true)
+                        {
+                            if (orf.StartsWith("M"))
+                            {
+                                orf = orf.Substring(1, orf.Length - 1);
+                                int indexofm = orf.IndexOf("M");
+                                if (indexofm > 0)
+                                {
+                                    string subs = orf.Substring(indexofm, orf.Length - indexofm);
+                                    orfs.Add(subs);
+                                    orf = subs;
+                                }
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                    }
+
+                }
+            }
+
+            using (StreamWriter writer = new StreamWriter("C:\\Users\\exr\\Documents\\GitHub\\Rosalind\\output.txt"))
+            {
+                foreach (var orf in orfs)
+                {
+                    writer.WriteLine(orf);
+                }
+            }
+        }
+
+        public static List<string> ORF(string s)
+        {
+            List<string> results = new List<string>();
+
             s = DNAtoRNA(s);
             string result = string.Empty;
             int l = s.Length;
@@ -98,7 +156,7 @@ namespace Rslnd
             {
                 string acid = s.Substring(cur, 3);
 
-                if(startfound)
+                if (startfound)
                 {
                     switch (acid)
                     {
@@ -206,14 +264,18 @@ namespace Rslnd
                         case "UAA":
                         case "UAG":
                         case "UGA":
-                            return result;
+                            results.Add(result);
+                            result = string.Empty;
+                            startfound = false;
+                            break;
+                            //return result;
                         default:
                             break;
                     }
                 }
                 else
                 {
-                    if(acid == "AUG")
+                    if (acid == "AUG")
                     {
                         startfound = true;
                         result += "M";
@@ -223,7 +285,7 @@ namespace Rslnd
                 cur += 3;
                 index++;
             }
-            return string.Empty;
+            return results;
         }
 
         public static BigInteger Fact(BigInteger n)
@@ -437,6 +499,78 @@ namespace Rslnd
                     yield return "" + s;
             }
         }
+
+        public static void FindProteinMotif()
+        {
+            List<string> proteins = new List<string>();
+
+            string line;
+            using (StreamReader reader = new StreamReader("C:\\Evgeny\\Development\\Rslnd\\input.txt"))
+            {
+                while ((line = reader.ReadLine()) != null)
+                {
+                    proteins.Add(line);
+                }
+            }
+
+            WebClient client = new WebClient();
+            Dictionary<string, string> proteinsDict = new Dictionary<string, string>();
+            foreach (string id in proteins)
+            {
+                Stream stream = client.OpenRead("http://www.uniprot.org/uniprot/" + id + ".fasta");
+
+                if (stream != null)
+                    using (StreamReader reader = new StreamReader(stream))
+                    {
+                        string protein = string.Empty;
+                        while ((line = reader.ReadLine()) != null)
+                        {
+                            if (!line.StartsWith(">"))
+                            {
+                                protein += line;
+                            }
+                        }
+
+                        proteinsDict.Add(id, protein);
+                    }
+            }
+
+            const string pattern = @"N[^P][ST][^P]";
+
+            using (StreamWriter writer = new StreamWriter("C:\\Evgeny\\Development\\Rslnd\\output.txt"))
+            {
+                foreach (KeyValuePair<string, string> kvp in proteinsDict)
+                {
+                    string val = kvp.Value;
+                    List<int> matches = new List<int>();
+                    int removed = 0;
+                    bool done = false;
+                    while (done == false)
+                    {
+                        Match match = Regex.Match(val, pattern);
+                        if (match.Success)
+                        {
+                            int index = val.IndexOf(match.Value);
+                            matches.Add(index + removed + 1);
+                            removed += index + 1;
+                            val = val.Substring(index + 1, val.Length - (index + 1));
+                        }
+                        else
+                        {
+                            done = true;
+                        }
+                    }
+
+                    if (matches.Count > 0)
+                    {
+                        string indices = string.Empty;
+                        writer.WriteLine(kvp.Key);
+                        indices = matches.Aggregate(indices, (current, index) => current + index + " ");
+                        writer.WriteLine(indices);
+                    }
+                }
+            }
+        }
     }
 
     public struct SubString
@@ -452,6 +586,5 @@ namespace Rslnd
             lenght = l;
         }
     }
-
 
 }
