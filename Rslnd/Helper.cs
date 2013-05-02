@@ -11,6 +11,89 @@ namespace Rslnd
 {
     public static class Helper
     {
+        public const string INPUT_FILE = "C:\\Users\\exr\\Documents\\GitHub\\Rosalind\\input.txt";
+        public const string OUTPUT_FILE = "C:\\Users\\exr\\Documents\\GitHub\\Rosalind\\output.txt";
+
+        public static void SignedPermutations(int val)
+        {
+            char[] chars = new char[val];
+            for(int i = 1; i <= val; i++)
+            {
+                char ch = i.ToString()[0];
+                chars[i - 1] = ch;
+
+            }
+            List<string> result = setper(chars);
+
+            List<string> signedperms = new List<string>();
+
+            foreach (string s in result)
+            {
+                signedperms.AddRange(SignedPermutations(s));
+            }
+
+            int j = 0;
+            //for(int i = 1; i <= val; i++)
+            //{
+            //    for (int j = 0; j <= val; j++)
+            //    {
+            //        List
+            //    }
+            //}
+        }
+
+        public static List<string> SignedPermutations(string s)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static List<int> LongesIncreasingSubsequence(int[] ints)
+        {
+            int n = ints.Length;
+
+            int maxi = 0;
+
+            int j = 0;
+            int maxj = 1;
+            int end = 1;
+
+            int[] L = new int[n];
+            int[] b = new int[n];
+
+            L[0] = 1;
+
+            for (j = 1; j < n; j++)
+            {
+                b[j] = j;
+                for (int i = 0; i < j; i++)
+                {
+                    if (ints[i] < ints[j] && L[i] > maxi)
+                    {
+                        maxi = L[i];
+                        b[j] = i;
+                    }
+                }
+                L[j] = 1 + maxi;
+                maxi = 0;
+
+                if (L[j] >= maxj)
+                {
+                    maxj = L[j];
+                    end = j;
+                }
+            }
+
+            List<int> results = new List<int>();
+            int next = end;
+            results.Add(ints[next]);
+            while (next > 0 && b[next] != next)
+            {
+                next = b[next];
+                results.Add(ints[next]);
+            }
+            return results;
+        }
+
         public static BigInteger BinomialCoeff(int x, int y)
         {
             BigInteger xfact = Fact(x);
@@ -19,13 +102,12 @@ namespace Rslnd
             return xfact/(yfact*xminusyfact);
         }
 
-        public static List<string> FastaStrings(string file)
+        public static List<string> FastaStrings()
         {
-            file = "C:\\Evgeny\\Development\\Rslnd\\input.txt";
             List<string> values = new List<string>();
             string line = string.Empty;
             string s = string.Empty;
-            using (StreamReader reader = new StreamReader(file))
+            using (StreamReader reader = new StreamReader(INPUT_FILE))
             {
                 while ((line = reader.ReadLine()) != null)
                 {
@@ -133,7 +215,7 @@ namespace Rslnd
                 }
             }
 
-            using (StreamWriter writer = new StreamWriter("C:\\Users\\exr\\Documents\\GitHub\\Rosalind\\output.txt"))
+            using (StreamWriter writer = new StreamWriter(OUTPUT_FILE))
             {
                 foreach (var orf in orfs)
                 {
@@ -400,11 +482,11 @@ namespace Rslnd
                     result.Add(new string(list));
                 }
             else
-                    for (i = k; i <= m; i++)
+                for (i = k; i <= m; i++)
                 {
-                        swap (ref list[k],ref list[i]);
-                        go (list, k+1, m, result);
-                        swap (ref list[k],ref list[i]);
+                    swap (ref list[k],ref list[i]);
+                    go (list, k+1, m, result);
+                    swap (ref list[k],ref list[i]);
                 }
         }
 
@@ -505,7 +587,7 @@ namespace Rslnd
             List<string> proteins = new List<string>();
 
             string line;
-            using (StreamReader reader = new StreamReader("C:\\Evgeny\\Development\\Rslnd\\input.txt"))
+            using (StreamReader reader = new StreamReader(INPUT_FILE))
             {
                 while ((line = reader.ReadLine()) != null)
                 {
@@ -537,7 +619,7 @@ namespace Rslnd
 
             const string pattern = @"N[^P][ST][^P]";
 
-            using (StreamWriter writer = new StreamWriter("C:\\Evgeny\\Development\\Rslnd\\output.txt"))
+            using (StreamWriter writer = new StreamWriter(OUTPUT_FILE))
             {
                 foreach (KeyValuePair<string, string> kvp in proteinsDict)
                 {
