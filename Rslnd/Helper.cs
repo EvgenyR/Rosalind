@@ -11,8 +11,74 @@ namespace Rslnd
 {
     public static class Helper
     {
-        public const string INPUT_FILE = "C:\\Users\\exr\\Documents\\GitHub\\Rosalind\\input.txt";
-        public const string OUTPUT_FILE = "C:\\Users\\exr\\Documents\\GitHub\\Rosalind\\output.txt";
+        //public const string INPUT_FILE = "C:\\Users\\exr\\Documents\\GitHub\\Rosalind\\input.txt";
+        //public const string OUTPUT_FILE = "C:\\Users\\exr\\Documents\\GitHub\\Rosalind\\output.txt";
+
+        public const string INPUT_FILE = "C:\\Users\\Administrator\\Documents\\GitHub\\Rosalind\\input.txt";
+        public const string OUTPUT_FILE = "C:\\Users\\Administrator\\Documents\\GitHub\\Rosalind\\output.txt";
+
+        public static List<int> SplicedMotif(string seq, string subseq)
+        {
+            List<int> result = new List<int>();
+            int cut = 0;
+            for (int i = 0; i < subseq.Length; i++)
+            { 
+                char test = subseq[i];
+                int val = seq.IndexOf(test);
+                result.Add(val + cut + 1);
+
+                cut = cut + val + 1;
+                seq = seq.Substring(val + 1, seq.Length - val - 1);
+            }
+            return result;
+        }
+
+        public static string ShortestSuperstring(List<string> input)
+        {
+            input = input.OrderByDescending(x => x.Length).ToList();
+
+            string superstring = input[0];
+
+            for (int i = 1; i < input.Count; i++)
+            {
+                if (!superstring.Contains(input[i]))
+                {
+                    superstring = CombineIntoSuper(superstring, input[i]);
+                }
+            }
+
+            return superstring;
+        }
+
+        private static string CombineIntoSuper(string superstring, string candidate)
+        {
+            int i = 1;
+            while (candidate.Length > i)
+            {
+                int testlen = candidate.Length - i;
+                string leftcan = candidate.Substring(0, testlen);
+                string rightcan = candidate.Substring(i, testlen);
+
+                string leftsuper = superstring.Substring(0, testlen);
+                string rightsuper = superstring.Substring(superstring.Length - testlen, testlen);
+
+                if (leftcan == rightsuper)
+                {
+                    string toappend = candidate.Substring(leftcan.Length, candidate.Length - leftcan.Length);
+                    return superstring + toappend;
+                }
+
+                if (rightcan == leftsuper)
+                {
+                    string toappend = candidate.Substring(0, candidate.Length - rightcan.Length);
+                    return toappend + superstring;
+                }
+
+                i++;
+            }
+
+            return superstring + candidate;
+        }
 
         public static void SignedPermutations(int val)
         {
