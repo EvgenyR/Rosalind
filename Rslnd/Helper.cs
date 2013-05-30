@@ -17,6 +17,31 @@ namespace Rslnd
         public const string INPUT_FILE = "C:\\Users\\Administrator\\Documents\\GitHub\\Rosalind\\input.txt";
         public const string OUTPUT_FILE = "C:\\Users\\Administrator\\Documents\\GitHub\\Rosalind\\output.txt";
 
+        public static decimal TransitionTransversionRation(string s1, string s2)
+        {
+            int transition = 0;
+            int transversion = 0;
+
+            for (int i = 0; i < s1.Length; i++)
+            {
+                char ch1 = s1[i];
+                char ch2 = s2[i];
+
+                if ((ch1 == 'A' && ch2 == 'G') ||
+                    (ch1 == 'G' && ch2 == 'A') ||
+                    (ch1 == 'C' && ch2 == 'T') ||
+                    (ch1 == 'T' && ch2 == 'C'))
+                    transition++;
+                if ((ch1 == 'A' && (ch2 == 'C' || ch2 == 'T')) ||
+                    (ch1 == 'C' && (ch2 == 'A' || ch2 == 'G')) ||
+                    (ch1 == 'G' && (ch2 == 'C' || ch2 == 'T')) ||
+                    (ch1 == 'T' && (ch2 == 'A' || ch2 == 'G')))
+                    transversion++;
+            }
+
+            return (decimal)transition / (decimal)transversion;
+        }
+
         public static List<int> SplicedMotif(string seq, string subseq)
         {
             List<int> result = new List<int>();
@@ -78,39 +103,6 @@ namespace Rslnd
             }
 
             return superstring + candidate;
-        }
-
-        public static void SignedPermutations(int val)
-        {
-            char[] chars = new char[val];
-            for(int i = 1; i <= val; i++)
-            {
-                char ch = i.ToString()[0];
-                chars[i - 1] = ch;
-
-            }
-            List<string> result = setper(chars);
-
-            List<string> signedperms = new List<string>();
-
-            foreach (string s in result)
-            {
-                signedperms.AddRange(SignedPermutations(s));
-            }
-
-            int j = 0;
-            //for(int i = 1; i <= val; i++)
-            //{
-            //    for (int j = 0; j <= val; j++)
-            //    {
-            //        List
-            //    }
-            //}
-        }
-
-        public static List<string> SignedPermutations(string s)
-        {
-            throw new NotImplementedException();
         }
 
         public static List<int> LongesIncreasingSubsequence(int[] ints)
@@ -530,7 +522,7 @@ namespace Rslnd
                         a^=b;
                   }
 
-        public static List<string> setper(char[] list)
+        public static List<string> StringPermutations(char[] list)
         {
             List<string> result = new List<string>();
             int x=list.Length-1;
@@ -554,6 +546,57 @@ namespace Rslnd
                     go (list, k+1, m, result);
                     swap (ref list[k],ref list[i]);
                 }
+        }
+
+        /// <summary>
+        /// Gets all permutations (of a given size) of a given list, either with or without reptitions.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements in the list.</typeparam>
+        /// <param name="list">The list of which to get permutations.</param>
+        /// <param name="action">The action to perform on each permutation of the list.</param>
+        /// <param name="resultSize">The number of elements in each resulting permutation; or <see langword="null"/> to get
+        /// premutations of the same size as <paramref name="list"/>.</param>
+        /// <param name="withRepetition"><see langword="true"/> to get permutations with reptition of elements;
+        /// <see langword="false"/> to get permutations without reptition of elements.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="list"/> is <see langword="null"/>. -or-
+        /// <paramref name="action"/> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentException"><paramref name="resultSize"/> is less than zero.</exception>
+        /// <remarks>
+        /// The algorithm performs permutations in-place. <paramref name="list"/> is however not changed.
+        /// </remarks>
+        public static List<string> GetPermutations<T>(this IList<T> list, Action<IList<T>> action, int? resultSize = null,
+            bool withRepetition = false)
+        {
+            List<string> toreturn = new List<string>();
+
+            var result = new T[resultSize.HasValue ? resultSize.Value : list.Count];
+            var indices = new int[result.Length];
+            for (int i = 0; i < indices.Length; i++)
+                indices[i] = withRepetition ? -1 : i - 1;
+
+            int curIndex = 0;
+            while (curIndex != -1)
+            {
+                indices[curIndex]++;
+                if (indices[curIndex] == list.Count)
+                {
+                    indices[curIndex] = withRepetition ? -1 : curIndex - 1;
+                    curIndex--;
+                }
+                else
+                {
+                    result[curIndex] = list[indices[curIndex]];
+                    if (curIndex < indices.Length - 1)
+                        curIndex++;
+                    else
+                    {
+                        action(result);
+                        toreturn.Add(new string(result as char[]));
+                    }
+                        
+                }
+            }
+            return toreturn;
         }
 
         public static double ProteinMass(string s)
@@ -718,6 +761,51 @@ namespace Rslnd
                     }
                 }
             }
+        }
+
+        internal static List<int[]> SignedPermutations(int[] s)
+        {
+            List<int[]> result = new List<int[]>();
+            foreach (int i in s)
+            {
+                result = AddOneSignedPermutation(result, i);
+            }
+            return result;
+        }
+
+        internal static List<int[]> AddOneSignedPermutation(List<int[]> input, int intToAdd)
+        {
+            List<int[]> result = new List<int[]>();
+
+            if (input.Count == 0)
+            {
+                result.Add(new int[] { intToAdd });
+                result.Add(new int[] { -intToAdd });
+                return result;
+            }
+
+            foreach (int[] i in input)
+            { 
+                int[] newi = new int[i.Length + 1];
+                int[] newineg = new int[i.Length + 1];
+                Array.Copy(i, newi, i.Length);
+                Array.Copy(i, newineg, i.Length);
+                newi[i.Length] = intToAdd;
+                newineg[i.Length] = -intToAdd;
+                result.Add(newi);
+                result.Add(newineg);
+            }
+            return result;
+        }
+
+        internal static int[] StringToIntArray(string s)
+        {
+            int[] result = new int[s.Length];
+            for(int i = 0; i < s.Length; i++)
+            {
+                result[i] = int.Parse(s[i].ToString());
+            }
+            return result;
         }
     }
 
