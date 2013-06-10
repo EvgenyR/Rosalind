@@ -63,49 +63,71 @@ namespace Rslnd
             input = input.OrderByDescending(x => x.Length).ToList();
 
             string superstring = input[0];
-
-            for (int i = 1; i < input.Count; i++)
+            input.RemoveAt(0);
+            int counter = input.Count;
+            for (int i = 0; i < counter; i++)
             {
-                if (!superstring.Contains(input[i]))
+                List<IntBoolString> items = new List<IntBoolString>();
+
+                for (int j = 0; j < input.Count; j++)
                 {
-                    superstring = CombineIntoSuper(superstring, input[i]);
+                    items.Add(GetIntersection(superstring, input[j]));
                 }
+
+                IntBoolString chosen = items.OrderByDescending(x => x.intValue).First();
+
+                superstring = CombineIntoSuper(superstring, chosen);
+                input.Remove(chosen.stringValue);
             }
 
             return superstring;
         }
 
-        private static string CombineIntoSuper(string superstring, string candidate)
+        private static IntBoolString GetIntersection(string super, string candidate)
         {
-            int i = 1;
+            IntBoolString result = new IntBoolString();
+            result.stringValue = candidate;
+
+            int i = 0;
+
             while (candidate.Length > i)
             {
                 int testlen = candidate.Length - i;
                 string leftcan = candidate.Substring(0, testlen);
                 string rightcan = candidate.Substring(i, testlen);
+                string leftsuper = super.Substring(0, testlen);
+                string rightsuper = super.Substring(super.Length - testlen, testlen);
 
-                string leftsuper = superstring.Substring(0, testlen);
-                string rightsuper = superstring.Substring(superstring.Length - testlen, testlen);
-
-                if (leftcan == rightsuper)
+                if (leftcan == rightsuper || rightcan == leftsuper)
                 {
-                    string toappend = candidate.Substring(leftcan.Length, candidate.Length - leftcan.Length);
-                    return superstring + toappend;
-                }
-
-                if (rightcan == leftsuper)
-                {
-                    string toappend = candidate.Substring(0, candidate.Length - rightcan.Length);
-                    return toappend + superstring;
+                    result.boolValue = (leftcan == rightsuper) ? true : false;
+                    result.intValue = testlen;
+                    return result;
                 }
 
                 i++;
             }
 
-            return superstring + candidate;
+            return result;
         }
 
-        public static List<int> LongesIncreasingSubsequence(int[] ints)
+        private static string CombineIntoSuper(string superstring, IntBoolString chosen)
+        {
+            string toAppend = string.Empty;
+            int lenToAppend = chosen.stringValue.Length - chosen.intValue;
+
+            toAppend = (chosen.boolValue == true) ?
+                chosen.stringValue.Substring(chosen.stringValue.Length - lenToAppend, lenToAppend) :
+                chosen.stringValue.Substring(0, lenToAppend);
+
+            superstring = (chosen.boolValue == true) ?
+                superstring + toAppend :
+                toAppend + superstring;
+
+            return superstring;
+        }
+
+        public static List<int> LongestIncreasingSubsequence(int[] ints)
         {
             int n = ints.Length;
 
@@ -152,12 +174,89 @@ namespace Rslnd
             return results;
         }
 
+        //public static int[] FailureArray(string s)
+        //{
+        //    int[] result = new int[s.Length];
+        //    result[0] = 0;
+
+        //    for (int i = 1; i < s.Length; i++)
+        //    {
+        //        int count = 0;
+
+        //    }
+        //}
+
+        public static double[,] HammingDistanceMatrix(List<string> input)
+        {
+            double[,] matrix = new double[input.Count(), input.Count()];
+
+            for (int i = 0; i < input.Count(); i++)
+            {
+                matrix[i, i] = 0;
+                for (int j = i + 1; j < input.Count(); j++)
+                {
+                    double value = CalculateDistance(input[i], input[j]);
+                    matrix[i, j] = value;
+                    matrix[j, i] = value;
+                }
+            }
+
+            return matrix;
+        }
+
+        private static double CalculateDistance(string one, string two)
+        {
+            int count = 0;
+            for (int i = 0; i < one.Length; i++)
+            {
+                if (one[i] != two[i])
+                    count++;
+            }
+            if (count == 0) return 0;
+            return (double)count / (double)one.Length;
+        }
+
+        public static int[] CatalanNumbers(int n)
+        {
+            int[] result = new int[n];
+
+            result[0] = 1;
+            for (int i = 1; i <= n - 1; i++)
+            {
+                double ii = (double)i;
+                double value = (2 * (2 * (ii - 1) + 1) / (ii + 1)) * (double)result[i - 1];
+                result[i] = (int)value;
+            }
+            return result;
+        }
+
+        public static int CatalanNumber(int n)
+        {
+            int result = 1;
+
+            for (int k = 2; k <= n; k++)
+            {
+                result = (result * (n + k)) / k;
+                result = result % 1000000;
+            }
+            return result;
+        }
+
         public static BigInteger BinomialCoeff(int x, int y)
         {
             BigInteger xfact = Fact(x);
             BigInteger yfact = Fact(y);
             BigInteger xminusyfact = Fact(x - y);
             return xfact/(yfact*xminusyfact);
+        }
+
+        public static int BinomialCoeffModulo1M(int x, int y)
+        {
+            int xfact = FactModulo1M(x);
+            int yfact = FactModulo1M(y);
+            int xminusyfact = FactModulo1M(x - y);
+            int denom = (yfact * xminusyfact) % 1000000;
+            return (xfact * (1000000 - denom)) % 1000000;
         }
 
         public static List<string> FastaStrings()
@@ -434,6 +533,12 @@ namespace Rslnd
             else return n*Fact(n - 1);
         }
 
+        public static int FactModulo1M(int n)
+        {
+            if (n == 0) return 1;
+            else return (n * FactModulo1M(n - 1)) % 1000000;
+        }
+
         public static string DNAtoAA(string dna)
         {
             string result = string.Empty;
@@ -514,14 +619,6 @@ namespace Rslnd
             return substr;
         } 
 
-        private static void swap (ref char a, ref char b)
-                 {
-                        if(a==b)return;
-                        a^=b;
-                        b^=a;
-                        a^=b;
-                  }
-
         public static List<string> StringPermutations(char[] list)
         {
             List<string> result = new List<string>();
@@ -534,71 +631,137 @@ namespace Rslnd
         {
             int i;
             if (k == m)
-                {
-                    Debug.Print(new string(list));
-                    Debug.Print(" ");
-                    result.Add(new string(list));
-                }
+            {
+                result.Add(new string(list));
+            }
             else
-                for (i = k; i <= m; i++)
-                {
-                    swap (ref list[k],ref list[i]);
-                    go (list, k+1, m, result);
-                    swap (ref list[k],ref list[i]);
-                }
+            for (i = k; i <= m; i++)
+            {
+                swap (ref list[k],ref list[i]);
+                go (list, k+1, m, result);
+                swap (ref list[k],ref list[i]);
+            }
         }
 
-        /// <summary>
-        /// Gets all permutations (of a given size) of a given list, either with or without reptitions.
-        /// </summary>
-        /// <typeparam name="T">The type of the elements in the list.</typeparam>
-        /// <param name="list">The list of which to get permutations.</param>
-        /// <param name="action">The action to perform on each permutation of the list.</param>
-        /// <param name="resultSize">The number of elements in each resulting permutation; or <see langword="null"/> to get
-        /// premutations of the same size as <paramref name="list"/>.</param>
-        /// <param name="withRepetition"><see langword="true"/> to get permutations with reptition of elements;
-        /// <see langword="false"/> to get permutations without reptition of elements.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="list"/> is <see langword="null"/>. -or-
-        /// <paramref name="action"/> is <see langword="null"/>.</exception>
-        /// <exception cref="ArgumentException"><paramref name="resultSize"/> is less than zero.</exception>
-        /// <remarks>
-        /// The algorithm performs permutations in-place. <paramref name="list"/> is however not changed.
-        /// </remarks>
-        public static List<string> GetPermutations<T>(this IList<T> list, Action<IList<T>> action, int? resultSize = null,
-            bool withRepetition = false)
+        private static void swap(ref char a, ref char b)
         {
-            List<string> toreturn = new List<string>();
+            if (a == b) return;
+            a ^= b;
+            b ^= a;
+            a ^= b;
+        }
 
-            var result = new T[resultSize.HasValue ? resultSize.Value : list.Count];
-            var indices = new int[result.Length];
-            for (int i = 0; i < indices.Length; i++)
-                indices[i] = withRepetition ? -1 : i - 1;
+        public static IEnumerable<String> GetWordsWithRepetition(Int32 length, char[] alphabet)
+        {
+            if (length <= 0)
+                yield break;
 
-            int curIndex = 0;
-            while (curIndex != -1)
+            for(int i = 0; i < alphabet.Length; i++)
             {
-                indices[curIndex]++;
-                if (indices[curIndex] == list.Count)
+                char c = alphabet[i];
+                if (length > 1)
                 {
-                    indices[curIndex] = withRepetition ? -1 : curIndex - 1;
-                    curIndex--;
+                    foreach (String restWord in GetWordsWithRepetition(length - 1, alphabet))
+                        yield return c + restWord;
                 }
                 else
-                {
-                    result[curIndex] = list[indices[curIndex]];
-                    if (curIndex < indices.Length - 1)
-                        curIndex++;
-                    else
-                    {
-                        action(result);
-                        toreturn.Add(new string(result as char[]));
-                    }
-                        
-                }
+                    yield return "" + c;
             }
-            return toreturn;
         }
 
+        public static string ALPHABET = "D N A";
+
+        public static List<string> Dictionary(int length)
+        {
+            char[] alphabet = Helper.AlphabetFromString(ALPHABET);
+
+            List<string> final = new List<string>();
+
+            for (int i = 1; i <= length; i++)
+            {
+                List<string> result = Helper.GetWordsWithRepetition(i, alphabet).ToList();
+                final.AddRange(result);
+            }
+            return final;
+        }
+
+        public static char[] AlphabetFromString(string input)
+        {
+            string[] split = input.Split(' ');
+            char[] alphabet = new char[split.Count()];
+            for (int i = 0; i < alphabet.Length; i++)
+            {
+                alphabet[i] = split[i][0];
+            }
+            return alphabet;
+        }
+
+        public static int WordComparer(string one, string two)
+        {
+            char[] alphabet = AlphabetFromString(ALPHABET);
+
+            int len = Math.Min(one.Length, two.Length);
+            for (int i = 0; i < len; i++)
+            { 
+                int posOne = Array.IndexOf(alphabet, one[i]);
+                int posTwo = Array.IndexOf(alphabet, two[i]);
+                if (posOne == posTwo)
+                {
+                    continue;
+                }
+                else if(posTwo > posOne)
+                {
+                    return -1;
+                }
+                return 1;
+            }
+            return two.Length > one.Length ? -1 : 1;
+        }
+
+        public static string RandomStringIntroduction(string input, double[] arrInput)
+        {
+            double[] result = new double[arrInput.Length];
+
+            int gcCount = input.Count(x => x == 'G') + input.Count(x => x == 'C');
+            int atCount = input.Count(x => x == 'A') + input.Count(x => x == 'T');
+
+            for(int i = 0; i<arrInput.Length; i++)
+            {
+                double pGC = arrInput[i] / 2;
+                double pAT = (1 - arrInput[i]) / 2;
+
+                result[i] = gcCount * Math.Log10(pGC) + atCount * Math.Log10(pAT);
+            }
+
+            string final = string.Empty;
+            for (int i = 0; i < result.Length; i++)
+            {
+                final = final + Math.Round(result[i], 3) + " ";
+            }
+
+            return final;
+        }
+
+        public static string EnumerateKMers(string input)
+        {
+            string final = string.Empty;
+
+            List<string> alphabet = Helper.GetWordsWithRepetition(4, new char[] { 'A', 'C', 'G', 'T' }).ToList();
+
+            int[] counts = Enumerable.Repeat(0, alphabet.Count).ToArray();
+
+            for (int i = 0; i <= input.Length - 4; i++)
+            {
+                string word = input.Substring(i, 4);
+                counts[alphabet.IndexOf(word)]++;
+            }
+
+            for (int i = 0; i < counts.Length; i++)
+                final = final + counts[i].ToString() + " ";
+
+            return final;
+        }
+        
         public static double ProteinMass(string s)
         {
             double result = 0;
@@ -807,6 +970,13 @@ namespace Rslnd
             }
             return result;
         }
+    }
+
+    public struct IntBoolString
+    {
+        public string stringValue;
+        public int intValue;
+        public bool boolValue;
     }
 
     public struct SubString

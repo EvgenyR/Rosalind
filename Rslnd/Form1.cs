@@ -20,29 +20,35 @@ namespace Rslnd
 
         }
 
-        
+        private string SetToString(List<int> set)
+        {
+            string s = "{";
+            foreach (int val in set)
+            {
+                s = s + val + ", ";
+            }
+            s = s.Substring(0, s.Length - 2);
+            return s + "}";
+        }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            List<string> fasta = Helper.FastaStrings();
-            string input = fasta[0];
-            //input = @"CTTCGAAAGTTTGGGCCGAGTCTTACAGTCGGTCTTGAAGCAAAGTAACGAACTCCACGGCCCTGACTACCGAACCAGTTGTGAGTACTCAACTGGGTGAGAGTGCAGTCCCTATTGAGTTTCCGAGACTCACCGGGATTTTCGATCCAGCCTCAGTCCAGTCTTGTGGCCAACTCACCAAATGACGTTGGAATATCCCTGTCTAGCTCACGCAGTACTTAGTAAGAGGTCGCTGCAGCGGGGCAAGGAGATCGGAAAATGTGCTCTATATGCGACTAAAGCTCCTAACTTACACGTAGACTTGCCCGTGTTAAAAACTCGGCTCACATGCTGTCTGCGGCTGGCTGTATACAGTATCTACCTAATACCCTTCAGTTCGCCGCACAAAAGCTGGGAGTTACCGCGGAAATCACAG";
-            string final = string.Empty;
-            List<string> alphabet = Helper.GetPermutations(new char[] { 'A', 'C', 'G', 'T' }, a => { Console.WriteLine(a.ToArray()); }, 4, true);
-            int[] counts = Enumerable.Repeat(0, alphabet.Count).ToArray();
+            List<string> input = Helper.FastaStrings();
 
-            for (int i = 0; i <= input.Length - 4; i++)
-            {
-                string word = input.Substring(i, 4);
-                counts[alphabet.IndexOf(word)]++;
-            }
+            //input = new List<string>{
+            //    "ATTAGACCTG",
+            //    "CCTGCCGGAA",
+            //    "AGACCTGCCG",
+            //    "GCCGGAATAC"
+            //};
 
-            for (int i=0; i<counts.Length; i++)
-                final = final + counts[i].ToString() + " ";
+            string result = Helper.ShortestSuperstring(input);
 
-            //List<string> alphabet = Helper.StringPermutations(new char[] { 'A', 'B', 'C', 'D' });
+            int zz = 0;
 
-            int z = 0;
+            //int[] catalan = Helper.CatalanNumbers(6);
+
+            //int result = Helper.CatalanNumber(11);
 
             //IOrderedEnumerable<string> input = Enumerable.Empty<string>().OrderBy(x => 1);
 
@@ -63,9 +69,7 @@ namespace Rslnd
             //    "GCATTAGACC"
             //};
 
-            //List<string> input = Helper.FastaStrings();
 
-            //string result = Helper.ShortestSuperstring(input);
 
             /*
             string one = "CAGGACGCTGAACTTCATAGCTGTTTTGCTATTGTATTTGAGATACACGGTGCTCGTTGAGGTCGACAACCTTTGCCTCGAGCTTGATGGCAATAAGCTTGGGTCTGAAGGTAGGAGTCACCCTGGACGATGGGGACTGCCAGGATCTTTGTCCACGGAAGCTGAGCCGGGGAGATCCTGAGCATCACCCCATTAAGTAACCGTTTACTCTCTCGCGTACGGTCGGCTAGGGCTGTAGAGGTGGGTATCGCATGCTGACTGGCGTACGGCCTCCAATGGACCACTGATAATCTCCGCAGTAAGTTGACCGATCGGCCAGTTACTGCAATGCATTTGCGACTGGGTGGCTGCGCGAACGGAAAAATAAGTGCTGAGCTGGCCTGGTCATACTTGGTAATCTTGTCGAATGATGGCGCCCTGCTAAAATGCGTCATACGAATACCAGGACTTCTCTGCTATATTATCATGAACAGACGCCCGTTACACATAGCTAGATACCTATAAGATCAGTTATAGTGTAGCTATACTGCCTGTCATCTGAAAAACACTACCTATAGGCCCCTCTAGCCATTGCCATGGGTGCGCTTTGTCAAGAGCATGATCATACCGCCTGTTGAGCGCGGCGGCAACATAGGCAGTCAATCGCCATCTTCGCTTATAGGGTGTGGTAGCGGTGTGTACATGTGAAGTCAAAAAAATACTAGTCGTTCCGCCCATGTCAAGGGCCATGTCACGTAGAAGTGAACGGCCATAGGCTCCTCACCTTTGTGATCGATAGGTATATATATGTATGTTTAGCCCTCGCGGGCAGACACTCGGTGCCTGACCATGCAGAAACCAGGGGACTAAGTGGGGATTTCTG";
@@ -114,25 +118,7 @@ namespace Rslnd
             {
                 input = reader.ReadToEnd();
             }
-
-            //input = "5 1 4 2 3";
-            //input = "9 11 2 13 7 15";
-
-            string[] inputs = input.Split(' ');
-            //List<int> ints = new List<int>();
-            int[] ints = new int[inputs.Length];
             
-            //foreach (var s in inputs)
-            //{
-            //    ints.Add(int.Parse(s));
-            //}
-
-            for(int i = 0; i < inputs.Length; i++)
-            {
-                ints[i] = int.Parse(inputs[i]);
-            }
-
-            List<int> results = Helper.LongesIncreasingSubsequence(ints);
             Array.Reverse(ints);
             List<int> results2 = Helper.LongesIncreasingSubsequence(ints);
 
