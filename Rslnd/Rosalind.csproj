@@ -47,15 +47,28 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssembleGenom.cs" />
+    <Compile Include="AssembleGenome.cs" />
+    <Compile Include="CompareSequences.cs" />
+    <Compile Include="Edge.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="GapPenaltyAlignment.cs" />
     <Compile Include="Helper.cs" />
+    <Compile Include="IMyPrefixMatcher.cs" />
+    <Compile Include="MyPrefixMatcher.cs" />
+    <Compile Include="MyTrie.cs" />
+    <Compile Include="MyTrieNode.cs" />
+    <Compile Include="Node.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ProteinSequencing.cs" />
+    <Compile Include="SuffixArrays.cs" />
+    <Compile Include="SuffixTree.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

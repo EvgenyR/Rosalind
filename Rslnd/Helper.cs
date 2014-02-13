@@ -17,6 +17,121 @@ namespace Rslnd
         public const string INPUT_FILE = "C:\\Users\\Administrator\\Documents\\GitHub\\Rosalind\\input.txt";
         public const string OUTPUT_FILE = "C:\\Users\\Administrator\\Documents\\GitHub\\Rosalind\\output.txt";
 
+        public static List<string> ParseTextFileToStrings()
+        {
+            List<string> result = new List<string>();
+            string line;
+            using (StreamReader reader = new StreamReader(INPUT_FILE))
+            {
+                while ((line = reader.ReadLine()) != null)
+                {
+                    result.Add(line.Trim());
+                }
+            }
+            return result;
+        }
+
+        public static void WriteStringsToTextFile(List<string> input)
+        {
+            using (StreamWriter writer = new StreamWriter(OUTPUT_FILE))
+            {
+                foreach (string line in input) writer.WriteLine(line);
+            }
+        }
+
+        public static void BruteForceCyclopeptide()
+        {
+            //int mass = 1024;
+            //int[] masses = new int[]{57,71,87,97,99,101,103,113,114,115,128,129,131,137,147,156,163,186};
+            //int[] ways = new int[1025];
+            int mass = 7;
+            int[] masses = new int[]{1, 2, 3};
+            int[] ways = new int[8];
+            ways[0] = 1;
+
+            for (int i = 0; i < masses.Length; i++)
+            {
+                for (int j = masses[i]; j <= mass; j++)
+                {
+                    ways[j] += ways[j - masses[i]];
+                }
+            }
+
+            BigInteger sum = ways.Sum();
+
+            int zz = 0;
+        
+        }
+
+        public static void PeptideSpectrum(string peptide)
+        {
+            string rslt = string.Empty;
+            List<string> result = new List<string>();
+            for (int i = 1; i < peptide.Length; i++)
+            {
+                result.AddRange(SubPeptides(peptide, i));
+            }
+            result.Add(peptide);
+
+            //HashTable<string, int> masses = new Dictionary<string, int>();
+            //Lookup<string, int> masses = new Lookup<string, int>();
+            List<KeyValuePair<string, int>> masses = new List<KeyValuePair<string, int>>();
+
+            foreach (string ppt in result)
+            {
+                int mass = IntProteinMass(ppt);
+                //masses.Add(ppt, mass);
+                masses.Add(new KeyValuePair<string,int>(ppt, mass));
+            }
+            //masses.Add(string.Empty, 0);
+            masses.Add(new KeyValuePair<string,int>("", 0));
+
+            var sortedDict = from entry in masses orderby entry.Value ascending select entry;
+
+            foreach(KeyValuePair<string, int> kvp in sortedDict)
+            {
+                rslt = rslt + kvp.Value + " ";
+            }
+
+            int z = 0;
+        }
+
+        public static List<string> SubPeptides(string peptide, int n)
+        { 
+            List<string> result = new List<string>();
+            for (int i = 0; i <= peptide.Length - n; i++)
+            { 
+                result.Add(peptide.Substring(i, n));
+            }
+
+            for(int i = 0; i < n - 1; i++)
+            {
+                result.Add(peptide.Substring(peptide.Length - i -1, i+1) + peptide.Substring(0, n - i - 1));
+            }
+
+            return result;
+        }
+
+        public static string PeptideEncodingProblem(string dna, string peptide)
+        {
+            int peplen = peptide.Length;
+            //dna = DNAtoRNA(dna);
+
+            string result = string.Empty;
+
+            for (int i = 0; i <= dna.Length - peplen * 3; i++)
+            {
+                string test = dna.Substring(i, peplen * 3);
+                string testRC = ReverseComplement(test);
+
+                string pep1 = DNAtoAA(test.Replace("T", "U"));
+                string pep2 = DNAtoAA(testRC.Replace("T", "U"));
+
+                if ((pep1 == peptide) || (pep2 == peptide)) result = result + test + " ";
+            }
+            return result;
+        }
+
         public static decimal TransitionTransversionRation(string s1, string s2)
         {
             int transition = 0;
@@ -202,6 +317,17 @@ namespace Rslnd
             }
 
             return matrix;
+        }
+
+        public static int HammingDistance(string one, string two)
+        {
+            int count = 0;
+            for (int i = 0; i < one.Length; i++)
+            {
+                if (one[i] != two[i])
+                    count++;
+            }
+            return count;
         }
 
         private static double CalculateDistance(string one, string two)
@@ -761,6 +887,17 @@ namespace Rslnd
 
             return final;
         }
+
+        public static int IntProteinMass(string s)
+        {
+            int result = 0;
+
+            foreach (var ch in s)
+            {
+                result += IntMassTable[ch];
+            }
+            return result;
+        }
         
         public static double ProteinMass(string s)
         {
@@ -798,6 +935,30 @@ namespace Rslnd
                            {'Y', 163.06333} 
                        };
 
+        public static Dictionary<char, int> IntMassTable = new Dictionary<char, int>
+                       {
+                           {'A', 71},
+                           {'C', 103},
+                           {'D', 115},
+                           {'E', 129},
+                           {'F', 147},
+                           {'G', 57},
+                           {'H', 137},
+                           {'I', 113},
+                           {'K', 128},
+                           {'L', 113},
+                           {'M', 131},
+                           {'N', 114},
+                           {'P', 97},
+                           {'Q', 128},
+                           {'R', 156},
+                           {'S', 87},
+                           {'T', 101},
+                           {'V', 99},
+                           {'W', 186},
+                           {'Y', 163} 
+                       };
+
         public static Dictionary<string, char> RNAtoProtein = new Dictionary<string, char>
         {
             {"UUC", 'F'},   {"UUU", 'F'},   
@@ -806,8 +967,8 @@ namespace Rslnd
             {"GUU", 'V'},   {"GUC", 'V'},   {"GUA", 'V'},   {"GUG", 'V'},
             {"AUG", 'M'},
             {"UCU", 'S'},   {"UCC", 'S'},   {"UCA", 'S'},   {"UCG", 'S'},   {"AGU", 'S'},   {"AGC", 'S'},
-            {"CCU", 'P'},   {"CCC", 'P'},   {"CCA", 'P'},   {"CCG", 'P'},   {"ACU", 'T'},   
-            {"ACC", 'T'},   {"ACA", 'T'},   {"ACG", 'T'},
+            {"CCU", 'P'},   {"CCC", 'P'},   {"CCA", 'P'},   {"CCG", 'P'},   
+            {"ACU", 'T'},   {"ACC", 'T'},   {"ACA", 'T'},   {"ACG", 'T'},
             {"GCU", 'A'},   {"GCC", 'A'},   {"GCA", 'A'},   {"GCG", 'A'},
             {"UAU", 'Y'},   {"UAC", 'Y'},
             {"CAU", 'H'},   {"CAC", 'H'},
@@ -852,6 +1013,13 @@ namespace Rslnd
                 else
                     yield return "" + s;
             }
+        }
+
+        public static string Reverse(string s)
+        {
+            char[] charArray = s.ToCharArray();
+            Array.Reverse(charArray);
+            return new string(charArray);
         }
 
         public static void FindProteinMotif()
@@ -969,6 +1137,75 @@ namespace Rslnd
                 result[i] = int.Parse(s[i].ToString());
             }
             return result;
+        }
+
+        internal static List<string> ErrorCorrection(List<string> input)
+        {
+            List<string> correct = new List<string>();
+            List<string> withError = new List<string>();
+
+            List<string> result = new List<string>();
+
+            foreach (string s in input)
+            {
+                string rcS = ReverseComplement(s);
+                int countS = input.Where(x => x == s).Count();
+                int countRCS = input.Where(x => x == rcS).Count();
+
+                if (countS + countRCS > 1)
+                {
+                    if (!correct.Contains(s) && !correct.Contains(rcS))
+                    {
+                        correct.Add(s);
+                    }
+                }
+                else
+                {
+                    withError.Add(s);
+                }
+            }
+
+            foreach (string s in withError)
+            {
+                string rcS = ReverseComplement(s);
+
+                foreach (string t in correct)
+                { 
+                    int dist = HammingDistance(s, t);
+                    int distRC = HammingDistance(rcS, t);
+
+                    if (dist == 1)
+                    {
+                        result.Add(s + "->" + t);
+                    }
+
+                    if (distRC == 1)
+                    {
+                        result.Add(s + "->" + ReverseComplement(t));
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        internal static double MatchingRandomMotif(int num, double cont, string prom)
+        {
+            int countGC = 0;
+            for (int i = 0; i < prom.Length; i++)
+            {
+                if (prom[i] == 'G' || prom[i] == 'C')
+                {
+                    countGC++;
+                }
+            }
+
+            int countAT = prom.Length - countGC;
+
+            double probString = Math.Pow(cont / 2, countGC) * Math.Pow((1 - cont) / 2, countAT);
+            probString = 1 - probString;
+
+            return 1 - Math.Pow(probString, num);
         }
     }
 
