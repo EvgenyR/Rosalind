@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Utils;
 
 namespace Rslnd
 {
@@ -121,7 +122,6 @@ namespace Rslnd
             string aligned1 = ReverseString(Result);
             string aligned2 = ReverseString(Result2);
 
-            int z = 0;
         }
 
         public static void FittingAlignment(string s1, string s2)
@@ -219,7 +219,6 @@ namespace Rslnd
             //aligned1 = aligned1.Replace("-", "");
             //aligned2 = aligned2.Replace("-", "");
 
-            int z = 0;
         }
 
         public static void OverlapAlignment(string s1, string s2)
@@ -307,7 +306,6 @@ namespace Rslnd
             //aligned1 = aligned1.Replace("-", "");
             //aligned2 = aligned2.Replace("-", "");
 
-            int z = 0;
         }
 
         public static void EditDistance(string s1, string s2)
@@ -351,7 +349,6 @@ namespace Rslnd
             string aligned1 = ReverseString(Result);
             string aligned2 = ReverseString(Result2);
 
-            int z = 0;
         }
 
         public static void LocalAlignment(string s1, string s2)
@@ -417,7 +414,6 @@ namespace Rslnd
             aligned1 = aligned1.Replace("-", "");
             aligned2 = aligned2.Replace("-", "");
 
-            int z = 0;
         }
 
         public static void GlobalAlignment(string s1, string s2)
@@ -470,7 +466,6 @@ namespace Rslnd
             string aligned1 = ReverseString(Result);
             string aligned2 = ReverseString(Result2);
 
-            int z = 0;
         }
 
         public static void GlobalAlignmentForBlog(string s1, string s2)

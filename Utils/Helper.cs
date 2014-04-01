@@ -1,13 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System;
-using System.Diagnostics;
 using System.Net;
 using System.Numerics;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
-namespace Rslnd
+namespace Utils
 {
     public static class Helper
     {
@@ -45,7 +46,7 @@ namespace Rslnd
             //int[] masses = new int[]{57,71,87,97,99,101,103,113,114,115,128,129,131,137,147,156,163,186};
             //int[] ways = new int[1025];
             int mass = 7;
-            int[] masses = new int[]{1, 2, 3};
+            int[] masses = new int[] { 1, 2, 3 };
             int[] ways = new int[8];
             ways[0] = 1;
 
@@ -60,7 +61,7 @@ namespace Rslnd
             BigInteger sum = ways.Sum();
 
             int zz = 0;
-        
+
         }
 
         public static void PeptideSpectrum(string peptide)
@@ -81,14 +82,14 @@ namespace Rslnd
             {
                 int mass = IntProteinMass(ppt);
                 //masses.Add(ppt, mass);
-                masses.Add(new KeyValuePair<string,int>(ppt, mass));
+                masses.Add(new KeyValuePair<string, int>(ppt, mass));
             }
             //masses.Add(string.Empty, 0);
-            masses.Add(new KeyValuePair<string,int>("", 0));
+            masses.Add(new KeyValuePair<string, int>("", 0));
 
             var sortedDict = from entry in masses orderby entry.Value ascending select entry;
 
-            foreach(KeyValuePair<string, int> kvp in sortedDict)
+            foreach (KeyValuePair<string, int> kvp in sortedDict)
             {
                 rslt = rslt + kvp.Value + " ";
             }
@@ -97,16 +98,16 @@ namespace Rslnd
         }
 
         public static List<string> SubPeptides(string peptide, int n)
-        { 
+        {
             List<string> result = new List<string>();
             for (int i = 0; i <= peptide.Length - n; i++)
-            { 
+            {
                 result.Add(peptide.Substring(i, n));
             }
 
-            for(int i = 0; i < n - 1; i++)
+            for (int i = 0; i < n - 1; i++)
             {
-                result.Add(peptide.Substring(peptide.Length - i -1, i+1) + peptide.Substring(0, n - i - 1));
+                result.Add(peptide.Substring(peptide.Length - i - 1, i + 1) + peptide.Substring(0, n - i - 1));
             }
 
             return result;
@@ -162,7 +163,7 @@ namespace Rslnd
             List<int> result = new List<int>();
             int cut = 0;
             for (int i = 0; i < subseq.Length; i++)
-            { 
+            {
                 char test = subseq[i];
                 int val = seq.IndexOf(test);
                 result.Add(val + cut + 1);
@@ -373,7 +374,7 @@ namespace Rslnd
             BigInteger xfact = Fact(x);
             BigInteger yfact = Fact(y);
             BigInteger xminusyfact = Fact(x - y);
-            return xfact/(yfact*xminusyfact);
+            return xfact / (yfact * xminusyfact);
         }
 
         public static int BinomialCoeffModulo1M(int x, int y)
@@ -422,7 +423,7 @@ namespace Rslnd
             Array.Reverse(arr);
             string rev = new string(arr);
             string revcomp = string.Empty;
-            for(int i=0;i<rev.Length;i++)
+            for (int i = 0; i < rev.Length; i++)
             {
                 switch (rev[i])
                 {
@@ -633,7 +634,7 @@ namespace Rslnd
                             result = string.Empty;
                             startfound = false;
                             break;
-                            //return result;
+                        //return result;
                         default:
                             break;
                     }
@@ -656,7 +657,7 @@ namespace Rslnd
         public static BigInteger Fact(BigInteger n)
         {
             if (n == 0) return 1;
-            else return n*Fact(n - 1);
+            else return n * Fact(n - 1);
         }
 
         public static int FactModulo1M(int n)
@@ -675,15 +676,15 @@ namespace Rslnd
                 string acid = dna.Substring(cur, 3);
 
                 char a = RNAtoProtein[acid];
-                if(a == 'Z')
+                if (a == 'Z')
                 {
                     return result;
                 }
                 else
                 {
-                    result = result + a;    
+                    result = result + a;
                 }
-                
+
                 cur = cur + 3;
             }
             return result;
@@ -743,17 +744,17 @@ namespace Rslnd
             }
 
             return substr;
-        } 
+        }
 
         public static List<string> StringPermutations(char[] list)
         {
             List<string> result = new List<string>();
-            int x=list.Length-1;
-            go(list,0,x, result);
+            int x = list.Length - 1;
+            go(list, 0, x, result);
             return result;
         }
 
-        private static void go (char[] list, int k, int m, List<string> result)
+        private static void go(char[] list, int k, int m, List<string> result)
         {
             int i;
             if (k == m)
@@ -761,12 +762,12 @@ namespace Rslnd
                 result.Add(new string(list));
             }
             else
-            for (i = k; i <= m; i++)
-            {
-                swap (ref list[k],ref list[i]);
-                go (list, k+1, m, result);
-                swap (ref list[k],ref list[i]);
-            }
+                for (i = k; i <= m; i++)
+                {
+                    swap(ref list[k], ref list[i]);
+                    go(list, k + 1, m, result);
+                    swap(ref list[k], ref list[i]);
+                }
         }
 
         private static void swap(ref char a, ref char b)
@@ -782,7 +783,7 @@ namespace Rslnd
             if (length <= 0)
                 yield break;
 
-            for(int i = 0; i < alphabet.Length; i++)
+            for (int i = 0; i < alphabet.Length; i++)
             {
                 char c = alphabet[i];
                 if (length > 1)
@@ -828,14 +829,14 @@ namespace Rslnd
 
             int len = Math.Min(one.Length, two.Length);
             for (int i = 0; i < len; i++)
-            { 
+            {
                 int posOne = Array.IndexOf(alphabet, one[i]);
                 int posTwo = Array.IndexOf(alphabet, two[i]);
                 if (posOne == posTwo)
                 {
                     continue;
                 }
-                else if(posTwo > posOne)
+                else if (posTwo > posOne)
                 {
                     return -1;
                 }
@@ -851,7 +852,7 @@ namespace Rslnd
             int gcCount = input.Count(x => x == 'G') + input.Count(x => x == 'C');
             int atCount = input.Count(x => x == 'A') + input.Count(x => x == 'T');
 
-            for(int i = 0; i<arrInput.Length; i++)
+            for (int i = 0; i < arrInput.Length; i++)
             {
                 double pGC = arrInput[i] / 2;
                 double pAT = (1 - arrInput[i]) / 2;
@@ -898,11 +899,11 @@ namespace Rslnd
             }
             return result;
         }
-        
+
         public static double ProteinMass(string s)
         {
             double result = 0;
-            
+
             foreach (var ch in s)
             {
                 result += MassTable[ch];
@@ -991,8 +992,8 @@ namespace Rslnd
             {
                 for (int j = l1; j <= l2; j++) //j is number of characters to get
                 {
-                    if((i + j) <= s.Length)
-                        result.Add(new SubString(s.Substring(i, j), i+1, j));
+                    if ((i + j) <= s.Length)
+                        result.Add(new SubString(s.Substring(i, j), i + 1, j));
                 }
             }
             return result;
@@ -1116,7 +1117,7 @@ namespace Rslnd
             }
 
             foreach (int[] i in input)
-            { 
+            {
                 int[] newi = new int[i.Length + 1];
                 int[] newineg = new int[i.Length + 1];
                 Array.Copy(i, newi, i.Length);
@@ -1132,7 +1133,7 @@ namespace Rslnd
         internal static int[] StringToIntArray(string s)
         {
             int[] result = new int[s.Length];
-            for(int i = 0; i < s.Length; i++)
+            for (int i = 0; i < s.Length; i++)
             {
                 result[i] = int.Parse(s[i].ToString());
             }
@@ -1170,7 +1171,7 @@ namespace Rslnd
                 string rcS = ReverseComplement(s);
 
                 foreach (string t in correct)
-                { 
+                {
                     int dist = HammingDistance(s, t);
                     int distRC = HammingDistance(rcS, t);
 
