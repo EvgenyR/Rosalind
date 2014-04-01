@@ -349,6 +349,13 @@ namespace Rslnd
             string aligned1 = ReverseString(Result);
             string aligned2 = ReverseString(Result2);
 
+            int n = 0;
+
+            for (int i = 0; i < aligned1.Length; i++ )
+            {
+                if (aligned1[i] != aligned2[i]) n++;
+            }
+            int z = 0;
         }
 
         public static void LocalAlignment(string s1, string s2)

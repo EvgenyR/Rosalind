@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Rslnd
+namespace TextBook
 {
-    public static class AssembleGenome
+    public static class AssembleGenomess
     {
         public static List<string> StringComposition(int k, string inp)
         {

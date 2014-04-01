@@ -15,8 +15,8 @@ namespace Utils
         //public const string INPUT_FILE = "C:\\Users\\exr\\Documents\\GitHub\\Rosalind\\input.txt";
         //public const string OUTPUT_FILE = "C:\\Users\\exr\\Documents\\GitHub\\Rosalind\\output.txt";
 
-        public const string INPUT_FILE = "C:\\Users\\Administrator\\Documents\\GitHub\\Rosalind\\input.txt";
-        public const string OUTPUT_FILE = "C:\\Users\\Administrator\\Documents\\GitHub\\Rosalind\\output.txt";
+        public const string INPUT_FILE = "C:\\Users\\EVROK\\Documents\\GitHub\\Rosalind\\input.txt";
+        public const string OUTPUT_FILE = "C:\\Users\\EVROK\\Documents\\GitHub\\Rosalind\\output.txt";
 
         public static List<string> ParseTextFileToStrings()
         {
@@ -64,7 +64,7 @@ namespace Utils
 
         }
 
-        public static void PeptideSpectrum(string peptide)
+        public static string PeptideSpectrum(string peptide)
         {
             string rslt = string.Empty;
             List<string> result = new List<string>();
@@ -94,7 +94,7 @@ namespace Utils
                 rslt = rslt + kvp.Value + " ";
             }
 
-            int z = 0;
+            return rslt;
         }
 
         public static List<string> SubPeptides(string peptide, int n)
@@ -110,26 +110,6 @@ namespace Utils
                 result.Add(peptide.Substring(peptide.Length - i - 1, i + 1) + peptide.Substring(0, n - i - 1));
             }
 
-            return result;
-        }
-
-        public static string PeptideEncodingProblem(string dna, string peptide)
-        {
-            int peplen = peptide.Length;
-            //dna = DNAtoRNA(dna);
-
-            string result = string.Empty;
-
-            for (int i = 0; i <= dna.Length - peplen * 3; i++)
-            {
-                string test = dna.Substring(i, peplen * 3);
-                string testRC = ReverseComplement(test);
-
-                string pep1 = DNAtoAA(test.Replace("T", "U"));
-                string pep2 = DNAtoAA(testRC.Replace("T", "U"));
-
-                if ((pep1 == peptide) || (pep2 == peptide)) result = result + test + " ";
-            }
             return result;
         }
 

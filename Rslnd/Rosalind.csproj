@@ -48,7 +48,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssembleGenom.cs" />
-    <Compile Include="AssembleGenome.cs" />
     <Compile Include="CompareSequences.cs" />
     <Compile Include="Edge.cs" />
     <Compile Include="Form1.cs">
