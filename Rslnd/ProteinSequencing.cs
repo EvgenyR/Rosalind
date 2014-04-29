@@ -165,17 +165,6 @@ namespace Rslnd
             return result;
         }
 
-        public static List<int> ParseIntString(string s)
-        {
-            List<int> result = new List<int>();
-            string[] ints = s.Split(' ');
-            foreach (string i in ints)
-            {
-                result.Add(int.Parse(i));
-            }
-            return result;
-        }
-
         public static List<int> ListOfUniques(List<int> input)
         {
             List<int> result = new List<int>();
@@ -183,58 +172,6 @@ namespace Rslnd
             foreach (int val in input)
             {
                 if (!result.Contains(val)) result.Add(val);
-            }
-            return result;
-        }
-
-        public static List<int> SpectrumConvolution(List<int> spectrum)
-        {
-            List<int> result = new List<int>();
-
-            //spectrum.Sort();
-
-            int len = spectrum.Count();
-            int iStart = len - 1;
-
-            for (int i = iStart; i > 0; i--)
-            {
-                int jStart = i - 1;
-                for (int j = jStart; j >= 0; j--)
-                {
-                    int val = Math.Abs(spectrum[i] - spectrum[j]);
-                    if(val > 0) result.Add(val);
-                }
-            }
-
-            return result;
-        }
-
-        public static List<int> SortByFrequency(List<int> source)
-        {
-            Dictionary<int, int> freq = new Dictionary<int, int>();
-
-            foreach (int val in source)
-            {
-                if (freq.ContainsKey(val))
-                {
-                    freq[val]++;
-                }
-                else
-                {
-                    freq.Add(val, 1);
-                }
-            }
-
-            Dictionary<int, int> sorted = freq.OrderByDescending(x => x.Value).ToDictionary(pair => pair.Key, pair => pair.Value);
-
-            List<int> result = new List<int>();
-
-            foreach (KeyValuePair<int, int> kvp in sorted)
-            {
-                for (int i = 0; i < kvp.Value; i++)
-                {
-                    result.Add(kvp.Key);
-                }
             }
             return result;
         }

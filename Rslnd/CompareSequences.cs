@@ -355,7 +355,6 @@ namespace Rslnd
             {
                 if (aligned1[i] != aligned2[i]) n++;
             }
-            int z = 0;
         }
 
         public static void LocalAlignment(string s1, string s2)

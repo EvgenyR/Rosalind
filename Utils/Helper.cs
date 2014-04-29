@@ -40,6 +40,17 @@ namespace Utils
             }
         }
 
+        public static List<int> ParseIntString(string s)
+        {
+            List<int> result = new List<int>();
+            string[] ints = s.Split(' ');
+            foreach (string i in ints)
+            {
+                result.Add(int.Parse(i));
+            }
+            return result;
+        }
+
         public static void BruteForceCyclopeptide()
         {
             //int mass = 1024;
@@ -59,9 +70,6 @@ namespace Utils
             }
 
             BigInteger sum = ways.Sum();
-
-            int zz = 0;
-
         }
 
         public static string PeptideSpectrum(string peptide)
@@ -1187,6 +1195,54 @@ namespace Utils
             probString = 1 - probString;
 
             return 1 - Math.Pow(probString, num);
+        }
+
+        public static List<KeyValuePair<int, List<int>>> ParseDirectedGraph()
+        {
+            int edges = 0;
+            List<KeyValuePair<int, List<int>>> result = new List<KeyValuePair<int, List<int>>>();
+            string line;
+            using (StreamReader reader = new StreamReader(INPUT_FILE))
+            {
+                while ((line = reader.ReadLine()) != null)
+                {
+                    line = line.Replace("-", "").Replace(" ", "");
+                    string[] parsedLine = line.Split('>');
+                    int startEdge = Int32.Parse(parsedLine[0]);
+                    string[] parsedEndEdges = parsedLine[1].Split(',');
+                    List<int> endEdges = new List<int>();
+                    foreach (string s in parsedEndEdges)
+                    {
+                        endEdges.Add(Int32.Parse(s));
+                    }
+                    result.Add(new KeyValuePair<int, List<int>>(startEdge, endEdges));
+                    edges = edges + endEdges.Count();
+                }
+            }
+            return result;
+        }
+
+        public static List<KeyValuePair<string, List<string>>> ParseStringGraph()
+        {
+            List<KeyValuePair<string, List<string>>> result = new List<KeyValuePair<string, List<string>>>();
+            string line;
+            using (StreamReader reader = new StreamReader(INPUT_FILE))
+            {
+                while ((line = reader.ReadLine()) != null)
+                {
+                    line = line.Replace("-", "").Replace(" ", "");
+                    string[] parsedLine = line.Split('>');
+                    string startEdge = parsedLine[0];
+                    string[] parsedEndEdges = parsedLine[1].Split(',');
+                    List<string> endEdges = new List<string>();
+                    foreach (string s in parsedEndEdges)
+                    {
+                        endEdges.Add(s);
+                    }
+                    result.Add(new KeyValuePair<string, List<string>>(startEdge, endEdges));
+                }
+            }
+            return result;
         }
     }
 
