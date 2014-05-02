@@ -41,6 +41,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AlignmentHelper.cs" />
+    <Compile Include="BurrowsHelper.cs" />
+    <Compile Include="FragileHelper.cs" />
     <Compile Include="GraphHelper.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="PeptideHelper.cs" />

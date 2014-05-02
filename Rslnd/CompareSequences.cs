@@ -119,8 +119,8 @@ namespace Rslnd
 
             OUTPUTLCSALIGN(backtrack, s2, s1, s1l, s2l);
 
-            string aligned1 = ReverseString(Result);
-            string aligned2 = ReverseString(Result2);
+            string aligned1 = Helper.ReverseString(Result);
+            string aligned2 = Helper.ReverseString(Result2);
 
         }
 
@@ -199,8 +199,8 @@ namespace Rslnd
 
             OUTPUTLCSALIGN(backtrack, s2, s1, imax, jmax);
 
-            string aligned1 = ReverseString(Result);
-            string aligned2 = ReverseString(Result2);
+            string aligned1 = Helper.ReverseString(Result);
+            string aligned2 = Helper.ReverseString(Result2);
 
             int score = 0;
 
@@ -286,8 +286,8 @@ namespace Rslnd
 
             OUTPUTLCSALIGN(backtrack, s2, s1, imax, jmax);
 
-            string aligned1 = ReverseString(Result);
-            string aligned2 = ReverseString(Result2);
+            string aligned1 = Helper.ReverseString(Result);
+            string aligned2 = Helper.ReverseString(Result2);
 
             int score = 0;
 
@@ -346,8 +346,8 @@ namespace Rslnd
 
             OUTPUTLCSALIGN(backtrack, s2, s1, s1l, s2l);
 
-            string aligned1 = ReverseString(Result);
-            string aligned2 = ReverseString(Result2);
+            string aligned1 = Helper.ReverseString(Result);
+            string aligned2 = Helper.ReverseString(Result2);
 
             int n = 0;
 
@@ -414,63 +414,11 @@ namespace Rslnd
 
             OUTPUTLCSALIGNLOCAL(backtrack, s2, s1, imax, jmax);
 
-            string aligned1 = ReverseString(Result);
-            string aligned2 = ReverseString(Result2);
+            string aligned1 = Helper.ReverseString(Result);
+            string aligned2 = Helper.ReverseString(Result2);
 
             aligned1 = aligned1.Replace("-", "");
             aligned2 = aligned2.Replace("-", "");
-
-        }
-
-        public static void GlobalAlignment(string s1, string s2)
-        {
-            int indelPenalty = -5;
-
-            int s1l = s1.Length;
-            int s2l = s2.Length;
-
-            int[,] matrix = new int[s1l + 1, s2l + 1];
-            int[,] backtrack = new int[s1l + 1, s2l + 1];
-
-            for (int i = 0; i <= s1l; i++) for (int j = 0; j <= s2l; j++) matrix[i, j] = 0;
-            for (int i = 0; i <= s1l; i++) for (int j = 0; j <= s2l; j++) backtrack[i, j] = 0;
-
-            for (int i = 0; i <= s1l; i++) matrix[i, 0] = indelPenalty * i;
-            for (int j = 0; j <= s2l; j++) matrix[0, j] = indelPenalty * j;
-
-            for (int i = 1; i <= s1l; i++)
-            {
-                for (int j = 1; j <= s2l; j++)
-                {
-                    //deletion
-                    int delCoef = matrix[i - 1, j] + indelPenalty;
-                    //insertion
-                    int insCoef = matrix[i, j - 1] + indelPenalty;
-                    //match / mismatch
-                    int mCoef = matrix[i - 1, j - 1] + GetMatrixCoeff(s1[i - 1], s2[j - 1], BlosumScoringMatrix);
-
-                    matrix[i, j] = Math.Max(Math.Max(delCoef, insCoef), mCoef);
-
-                    if (matrix[i, j] == delCoef) backtrack[i, j] = -1; //
-                    else if (matrix[i, j] == insCoef) backtrack[i, j] = -2; //
-                    else if (matrix[i, j] == mCoef) backtrack[i, j] = 1;
-
-                }
-            }
-
-            for (int i = 0; i <= s1l; i++)
-            {
-                for (int j = 0; j <= s2l; j++)
-                {
-                    Console.Write(matrix[i, j].ToString().PadLeft(4));
-                }
-                Console.WriteLine();
-            }
-
-            OUTPUTLCSALIGN(backtrack, s2, s1, s1l, s2l);
-
-            string aligned1 = ReverseString(Result);
-            string aligned2 = ReverseString(Result2);
 
         }
 
@@ -502,59 +450,10 @@ namespace Rslnd
 
             OUTPUTLCSALIGN(backtrack, s2, s1, s1l, s2l);
 
-            string aligned1 = ReverseString(Result);
-            string aligned2 = ReverseString(Result2);
+            string aligned1 = Helper.ReverseString(Result);
+            string aligned2 = Helper.ReverseString(Result2);
         }
 
-        public static void LCS(string s1, string s2)
-        {
-            int s1l = s1.Length;
-            int s2l = s2.Length;
-
-            int[,] matrix = new int[s1l + 1, s2l + 1];
-            int[,] backtrack = new int[s1l + 1, s2l + 1];
-
-            for (int i = 0; i <= s1l; i++) for (int j = 0; j <= s2l; j++) matrix[i, j] = 0;
-            for (int i = 0; i <= s1l; i++) for (int j = 0; j <= s2l; j++) backtrack[i, j] = 0;
-
-            for (int i = 1; i <= s1l; i++)
-            {
-                for (int j = 1; j <= s2l; j++)
-                {
-                    int a = Math.Max(matrix[i - 1, j], matrix[i, j - 1]);
-                    if (s1[i - 1] == s2[j - 1]) a = Math.Max(a, matrix[i - 1, j - 1] + 1);
-                    matrix[i, j] = a;
-
-                    if (matrix[i, j] == matrix[i - 1, j]) backtrack[i, j] = -1;
-                    else if (matrix[i, j] == matrix[i, j - 1]) backtrack[i, j] = -2;
-                    else if (matrix[i, j] == matrix[i - 1, j - 1] + 1) backtrack[i, j] = 1;
-                }
-            }
-
-            //for (int i = 0; i <= s1l; i++)
-            //{
-            //    for (int j = 0; j <= s2l; j++)
-            //    {
-            //        Console.Write(matrix[i, j] + " ");
-            //    }
-            //    Console.WriteLine();
-            //}
-            //Console.WriteLine("===");
-            //for (int i = 0; i <= s1l; i++)
-            //{
-            //    for (int j = 0; j <= s2l; j++)
-            //    {
-            //        Console.Write(backtrack[i, j] + " ");
-            //    }
-            //    Console.WriteLine();
-            //}
-
-            //OUTPUTLCSALIGN(backtrack, s2, s1, s1l, s2l);
-
-            OUTPUTLCS(backtrack, s2, s1l, s2l);
-
-            string aligned = ReverseString(Result);
-        }
 
         public static void OUTPUTLCSALIGNLOCAL(int[,] backtrack, string v, string w, int i, int j)
         {
@@ -654,77 +553,7 @@ namespace Rslnd
             return ManhattanMatrix.Cast<int>().Max();
         }
 
-        public static void ManhattanProblem()
-        {
-            List<string> input = Helper.ParseTextFileToStrings();
-            int n = Int32.Parse(input[0]);
-            int m = Int32.Parse(input[1]);
 
-            DownMatrix = new int[n, m + 1];
-            RightMatrix = new int[n + 1, m];
-            PathMatrix = new int[n + 1, m + 1];
-
-            for (int i = 2; i <= 1 + n; i++)
-            {
-                string[] sp = input[i].Split(' ');
-                for (int j = 0; j < m + 1; j++)
-                {
-                    DownMatrix[i - 2, j] = Int32.Parse(sp[j]);
-                }
-            }
-
-            for (int i = 3 + n; i <= 3 + 2 * n; i++)
-            {
-                string[] sp = input[i].Split(' ');
-                for (int j = 0; j < m; j++)
-                {
-                    RightMatrix[i - n - 3, j] = Int32.Parse(sp[j]);
-                }
-            }
-
-            PathMatrix[0, 0] = 0;
-
-            for (int i = 1; i <= n; i++)
-            {
-                PathMatrix[i, 0] = PathMatrix[i - 1, 0] + DownMatrix[i - 1, 0];
-            }
-
-            for (int j = 1; j <= m; j++)
-            {
-                PathMatrix[0, j] = PathMatrix[0, j - 1] + RightMatrix[0, j - 1];
-            }
-
-            for (int i = 1; i <= n; i++)
-            {
-                for (int j = 1; j <= m; j++)
-                {
-                    PathMatrix[i, j] = Math.Max(PathMatrix[i - 1, j] + DownMatrix[i - 1, j], PathMatrix[i, j - 1] + RightMatrix[i, j - 1]);
-                }
-            }
-        }
-
-        public static void DPCHANGE(int val, string denoms)
-        {
-            int[] idenoms = Array.ConvertAll(denoms.Split(','), int.Parse);
-            Array.Sort(idenoms);
-            int[] minNumCoins = new int[val + 1];
-
-            minNumCoins[0] = 0;
-            for (int m = 1; m <= val; m++)
-            {
-                minNumCoins[m] = Int32.MaxValue - 1;
-                for (int i = 1; i <= idenoms.Count() - 1; i++)
-                {
-                    if (m >= idenoms[i])
-                    {
-                        if (minNumCoins[m - idenoms[i]] + 1 < minNumCoins[m])
-                        {
-                            minNumCoins[m] = minNumCoins[m - idenoms[i]] + 1;
-                        }
-                    }
-                }
-            }
-        }
 
         public static int MaxValue(int[,] matrix)
         {
@@ -804,90 +633,5 @@ namespace Rslnd
         {-3, -2, -4, -3,  1, -2, -2, -3, -3, -2, -1, -4, -4, -2, -3, -3, -2, -3, 11,  2},
         {-2, -2, -3, -2,  3, -3,  2, -1, -2, -1, -1, -2, -3, -1, -2, -2, -2, -1,  2,  7}
         };
-
-        public static string ReverseString(string input)
-        {
-            char[] charArray = input.ToCharArray();
-            Array.Reverse(charArray);
-            return new string(charArray);
-        }
-
-        public static void SortGraph()
-        {
-            List<string> input = Helper.ParseTextFileToStrings();
-
-            List<KeyValuePair<int, KeyValuePair<int, int>>> graph = new List<KeyValuePair<int, KeyValuePair<int, int>>>();
-            List<KeyValuePair<int, KeyValuePair<int, int>>> sortedgraph = new List<KeyValuePair<int, KeyValuePair<int, int>>>();
-            Dictionary<int, bool> nodes = new Dictionary<int, bool>();
-
-            for (int i = 2; i < input.Count(); i++)
-            {
-                string s = input[i];
-                s = s.Replace("-", "");
-                string[] ss = s.Split('>');
-                int one = Int32.Parse(ss[0]);
-                string[] sss = ss[1].Split(':');
-                int two = Int32.Parse(sss[0]);
-                int three = Int32.Parse(sss[1]);
-
-                KeyValuePair<int, int> kvp = new KeyValuePair<int, int>(two, three);
-                graph.Add(new KeyValuePair<int, KeyValuePair<int, int>>(one, kvp));
-                if (!nodes.ContainsKey(one)) nodes.Add(one, false);
-                if (!nodes.ContainsKey(two)) nodes.Add(two, false);
-            }
-
-            List<int> candidates = new List<int>();
-            candidates.Add(Int32.Parse(input[0]));
-
-            //sort the graph
-            while (candidates.Count > 0)
-            {
-                int b = candidates[0];
-                candidates.Remove(b);
-                List<KeyValuePair<int, KeyValuePair<int, int>>> test = graph.Where(m => m.Key == b).ToList();
-
-                foreach (KeyValuePair<int, KeyValuePair<int, int>> kvp in test)
-                {
-                    sortedgraph.Add(kvp);
-                    candidates.Add(kvp.Value.Key);
-                    graph.Remove(kvp);
-                }
-            }
-
-            List<KeyValuePair<int, KeyValuePair<int, int>>> updatedgraph = AssembleGenom.CloneGraph2(sortedgraph);
-            foreach (KeyValuePair<int, KeyValuePair<int, int>> kvp in sortedgraph)
-            {
-                AdjustOneUp(sortedgraph, updatedgraph, kvp);
-            }
-
-            List<string> temp = new List<string>();
-            foreach (KeyValuePair<int, KeyValuePair<int, int>> kvp in updatedgraph)
-            {
-                string s = kvp.Key + "->" + kvp.Value.Key + ":" + kvp.Value.Value;
-                temp.Add(s);
-            }
-
-            Helper.WriteStringsToTextFile(temp);
-        }
-
-        private static void AdjustOneUp(List<KeyValuePair<int, KeyValuePair<int, int>>> sortedgraph, List<KeyValuePair<int, KeyValuePair<int, int>>> updatedgraph, KeyValuePair<int, KeyValuePair<int, int>> kvp)
-        {
-            int index = sortedgraph.IndexOf(kvp);
-            int val = kvp.Key;
-            for (int i = index - 1; i >= 0; i--)
-            {
-                KeyValuePair<int, KeyValuePair<int, int>> testKvp = sortedgraph[i];
-                if (testKvp.Value.Key == val)
-                {
-                    KeyValuePair<int, KeyValuePair<int, int>> newKvp =
-                        new KeyValuePair<int, KeyValuePair<int, int>>(sortedgraph[index].Key,
-                            new KeyValuePair<int, int>(sortedgraph[index].Value.Key, sortedgraph[index].Value.Value + testKvp.Value.Value));
-                    updatedgraph[index] = newKvp;
-                    return;
-                }
-            }
-            return;
-        }
-
     }
 }

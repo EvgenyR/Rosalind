@@ -53,12 +53,12 @@ namespace Utils
 
         public static void BruteForceCyclopeptide()
         {
-            //int mass = 1024;
-            //int[] masses = new int[]{57,71,87,97,99,101,103,113,114,115,128,129,131,137,147,156,163,186};
-            //int[] ways = new int[1025];
-            int mass = 7;
-            int[] masses = new int[] { 1, 2, 3 };
-            int[] ways = new int[8];
+            int mass = 1024;
+            int[] masses = new int[] { 57, 71, 87, 97, 99, 101, 103, 113, 114, 115, 128, 129, 131, 137, 147, 156, 163, 186 };
+            int[] ways = new int[1025];
+            //int mass = 7;
+            //int[] masses = new int[] { 1, 2, 3 };
+            //int[] ways = new int[8];
             ways[0] = 1;
 
             for (int i = 0; i < masses.Length; i++)
@@ -732,6 +732,13 @@ namespace Utils
             }
 
             return substr;
+        }
+
+        public static string ReverseString(string input)
+        {
+            char[] charArray = input.ToCharArray();
+            Array.Reverse(charArray);
+            return new string(charArray);
         }
 
         public static List<string> StringPermutations(char[] list)

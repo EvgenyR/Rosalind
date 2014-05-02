@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Utils;
 
 namespace Rslnd
 {
@@ -137,8 +138,8 @@ namespace Rslnd
 
             //OUTPUTLCSALIGN(backtrack, s2, s1, s1l, s2l);
 
-            string aligned1 = CompareSequences.ReverseString(Result);
-            string aligned2 = CompareSequences.ReverseString(Result2);
+            string aligned1 = Helper.ReverseString(Result);
+            string aligned2 = Helper.ReverseString(Result2);
 
             //int z = 0;
         }
