@@ -19,9 +19,9 @@ namespace Algorithms
 
         private void button1_Click(object sender, EventArgs e)
         {
-            int x = 23;
+            DegreeArray.DegreeArrayProblem();
 
-            int result = Fibonacci.GetFibonacciNumber(x);
+            int z = 0;
 
         }
     }

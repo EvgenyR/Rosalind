@@ -15,6 +15,7 @@ namespace TextBook
 
         private void button1_Click(object sender, EventArgs e)
         {
+
             List<string> input = Helper.ParseTextFileToStrings();
 
             string transform = input[0];

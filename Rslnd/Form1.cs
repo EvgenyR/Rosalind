@@ -34,7 +34,8 @@ namespace Rslnd
 
         private void button1_Click(object sender, EventArgs e)
         {
-            string s = SuffixArrays.BurrowsWheelerTransform("GCGTGCCTGGTCA$");
+            //string s = SuffixArrays.BurrowsWheelerTransform("GCGTGCCTGGTCA$");
+            Helper.BruteForceCyclopeptide();
 
             //string transform = "smnpbnnaaaaa$a";
 

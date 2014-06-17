@@ -51,9 +51,31 @@ namespace Utils
             return result;
         }
 
+        public static List<int> ParseIntStringToUnique(string s)
+        {
+            List<int> result = new List<int>();
+            string[] ints = s.Split(' ');
+            foreach (string i in ints)
+            {
+                if (!result.Contains(int.Parse(i))) result.Add(int.Parse(i));
+            }
+            return result;
+        }
+
+        public static int[] ParseDelimitedStringToIntArray(string s, char delimiter)
+        {
+            string[] strs = s.Split(new char[] { delimiter });
+            int[] result = new int[strs.Length];
+            for (int i = 0; i < strs.Length; i++)
+            {
+                result[i] = int.Parse(strs[i].ToString());
+            }
+            return result;
+        }
+
         public static void BruteForceCyclopeptide()
         {
-            int mass = 1024;
+            int mass = 270; // should be 25 // 1024; 
             int[] masses = new int[] { 57, 71, 87, 97, 99, 101, 103, 113, 114, 115, 128, 129, 131, 137, 147, 156, 163, 186 };
             int[] ways = new int[1025];
             //int mass = 7;
